@@ -4,7 +4,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StdControlSys"
+        xmlns:p ="clr-namespace:StdControlSys.Properties"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid/>
+        Title="学生信息管理系统" Height="360" Width="580" Icon="GZ_128X128.ico" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="飞花令" Grid.Column="3" HorizontalAlignment="Left" Margin="0.4,10,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label x:Name="FlowerTokenWord" Content="完" Grid.Column="3" Margin="38.4,40,31.2,52.4" Height="74" Width="74" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Button x:Name="FlowerTokenButton" Content="飞花" Grid.Column="3" HorizontalAlignment="Left" Height="28" Margin="33.4,128,0,0" VerticalAlignment="Top" Width="74" Click="FlowerTokenButton_Click"/>
+    </Grid>
 </Window>

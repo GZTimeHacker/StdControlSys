@@ -80,6 +80,10 @@ namespace StdControlSys
         /// </summary>
        public int Order;
         /// <summary>
+        /// 小组积分
+        /// </summary>
+        public int Score;
+        /// <summary>
         /// 实例化小组
         /// </summary>
         /// <param name="stds">学生列表</param>
@@ -94,6 +98,7 @@ namespace StdControlSys
             {
                 Members.Add(stds.Find(s => s.Number == n));
             }
+            Score = 0;
         }
         public override string ToString()
         {

@@ -24,10 +24,13 @@ namespace StdControlSys
         Random random = new Random();
         List<Std> stds = new List<Std>();
         List<Group> groups = new List<Group>();
+        public string FlowersWords = "";
+        public string FlowerWordsDefault = "春夏秋冬江花月夜雪山行云雨";
         public MainWindow()
         {
             InitializeComponent();
             ReadFileData("GroupInfo.xml", "StdInfo_GY4.xml");
+            FlowersWords = FlowerWordsDefault;
         }
 
         /// <summary>
@@ -37,6 +40,11 @@ namespace StdControlSys
         /// <param name="StdFileName">学生文件位置</param>
         public void ReadFileData(string GroupFileName,string StdFileName)
         {
+            if (!File.Exists(GroupFileName) || !File.Exists(StdFileName)) 
+            {
+                MessageBox.Show( !File.Exists(GroupFileName) ? GroupFileName : StdFileName + "文件不存在", "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             stds = null;
             groups = null;
             groups = new List<Group>();
@@ -54,14 +62,20 @@ namespace StdControlSys
             {
                 groups.Add(new Group(stds, item));
             }
-            /* 
-             * foreach (var item in groups)
-             * {
-             *     MessageBox.Show(item.ToString());
-             * }
-             */
             groupinfos = null;
         }
 
+        public void ShowGroups()
+        {
+            
+        }
+
+        private void FlowerTokenButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FlowersWords.Length==0) { FlowersWords = FlowerWordsDefault; FlowerTokenWord.Content = "完"; return; }
+            char Selected=FlowersWords.ElementAtOrDefault(random.Next(0,FlowersWords.Length - 1));
+            FlowerTokenWord.Content = Selected;
+            FlowersWords=FlowersWords.Remove(FlowersWords.IndexOf(Selected), 1);
+        }
     }
 }
