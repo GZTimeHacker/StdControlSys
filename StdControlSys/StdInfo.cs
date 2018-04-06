@@ -14,6 +14,7 @@ using System.ComponentModel;
 
 namespace StdControlSys
 {
+    #region 读取写入文件
     /// <summary>
     /// 学生基本信息对象
     /// </summary>
@@ -316,13 +317,14 @@ namespace StdControlSys
             return null;
         }
     }
+    #endregion
 
     /// <summary>
     /// 全局变量
     /// </summary>
     class Global : INotifyPropertyChanged
     {
-        private string _SelectedGroupInfo = "";
+        private string _SelectedGroupInfo = "waiting...";
         /// <summary>
         /// 被选择的小组信息
         /// </summary>
@@ -334,7 +336,7 @@ namespace StdControlSys
             }
         }
 
-        private string _SelectedStdInfo = "";
+        private string _SelectedStdInfo = "waiting...";
         /// <summary>
         /// 被选择的学生信息
         /// </summary>
@@ -345,6 +347,20 @@ namespace StdControlSys
             {
                 _SelectedStdInfo = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedStdInfo"));
+            }
+        }
+
+        private string _FlowerTokenChar = "完";
+        /// <summary>
+        /// 飞花令字符
+        /// </summary>
+        public string FlowerTokenChar
+        {
+            get { return _FlowerTokenChar; }
+            set
+            {
+                _FlowerTokenChar = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FlowerTokenChar"));
             }
         }
 
