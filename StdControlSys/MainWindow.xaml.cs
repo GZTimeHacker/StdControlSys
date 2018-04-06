@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Threading;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace StdControlSys
 {
@@ -23,13 +24,16 @@ namespace StdControlSys
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region 后台启动工作
         Global GlobalInfo = new Global();
         Random random = new Random();
         List<Std> stds = new List<Std>();
         List<Group> groups = new List<Group>();
         public string FlowersWords = "";
-        public string FlowerWordsDefault = "春夏秋冬江花月夜雪山行云雨";
+        public string FlowerWordsDefault = "春夏秋冬江花月夜雪山行云雨水";
+        int SelectingStdNum = -1;
+        int SelectingGrpOrder = -1;
+
+        #region 后台启动工作
         public MainWindow()
         {
             InitializeComponent();
@@ -42,6 +46,7 @@ namespace StdControlSys
             this.SelectedGroup.DataContext = GlobalInfo;
             this.SelectedStd.DataContext = GlobalInfo;
             this.FlowerTokenWord.DataContext = GlobalInfo;
+            this.GroupData.ItemsSource = groups;
         }
 
         /// <summary>
@@ -191,6 +196,7 @@ namespace StdControlSys
                 group = groups.ElementAtOrDefault(random.Next(0, groups.Count));
                 GlobalInfo.SelectedGroupInfo = "第" + group.Order + "组\n" + group.Name + "\n组长:" + group.Leader.Name;
                 Thread.Sleep(20 + i * i / 2);
+                SelectingGrpOrder = group.Order;
             }
         }
 
@@ -214,8 +220,28 @@ namespace StdControlSys
                 std = stds.ElementAtOrDefault(random.Next(0, stds.Count));
                 GlobalInfo.SelectedStdInfo = std.Name + "\n" + std.Number;
                 Thread.Sleep(20 + i * i / 2);
+                SelectingStdNum = std.Number;
             }
         }
         #endregion
+
+        private void AddStdScore_Click(object sender, RoutedEventArgs e)
+        {
+            stds.Find(s => s.Number == SelectingStdNum).Score++;
+            Group grp = groups.Find(g => g.Leader.Number == SelectingStdNum);
+            if (grp != null) { grp.Score++; return; }
+            foreach (var gr in groups)
+            {
+                Std stemp = gr.Members.Find(s => s.Number == SelectingStdNum);
+                if (stemp != null) { grp = groups.Find(g => g.Order == stemp.Group); break; }
+            }
+            if (grp != null) grp.Score++;
+        }
+
+        private void AddGroupScore_Click(object sender, RoutedEventArgs e)
+        {
+            Group grp = groups.Find(g => g.Order == SelectingGrpOrder);
+            if (grp != null) grp.Score++;
+        }
     }
 }

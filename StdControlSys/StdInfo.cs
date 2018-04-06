@@ -14,7 +14,7 @@ using System.ComponentModel;
 
 namespace StdControlSys
 {
-    #region 读取写入文件
+    #region 基本数据类
     /// <summary>
     /// 学生基本信息对象
     /// </summary>
@@ -33,6 +33,14 @@ namespace StdControlSys
         /// </summary>
         public int Number { get; set; }
         /// <summary>
+        /// 学生积分
+        /// </summary>
+        public int Score { get; set; }
+        /// <summary>
+        /// 所在小组
+        /// </summary>
+        public int Group { get; set; }
+        /// <summary>
         /// 新建学生对象
         /// </summary>
         public Std()
@@ -40,6 +48,7 @@ namespace StdControlSys
             Class = 0;
             Name = "null";
             Number = 0;
+            Score = 0;
         }
         /// <summary>
         /// 新建学生对象
@@ -52,6 +61,7 @@ namespace StdControlSys
             this.Class = Class;
             this.Name = Name;
             this.Number = Number;
+            Score = 0;
         }
         public override string ToString()
         {
@@ -64,7 +74,7 @@ namespace StdControlSys
     /// <summary>
     /// 小组对象
     /// </summary>
-    public class Group
+    public class Group : INotifyPropertyChanged
     {
         /// <summary>
         /// 组员
@@ -77,15 +87,24 @@ namespace StdControlSys
         /// <summary>
         /// 组名
         /// </summary>
-        public string Name;
+        public string Name { get; set; }
         /// <summary>
         /// 小组编号
         /// </summary>
-       public int Order;
+        public int Order { get; set; }
+        private int _Score;
         /// <summary>
         /// 小组积分
         /// </summary>
-        public int Score;
+        public int Score
+        {
+            get { return _Score; }
+            set
+            {
+                _Score = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Score"));
+            }
+        }
         /// <summary>
         /// 实例化小组
         /// </summary>
@@ -97,12 +116,20 @@ namespace StdControlSys
             Name = info.Name;
             Order = info.Order;
             Leader = stds.Find(s => s.Number == info.LeaderNum);
+            Leader.Group = Order;
             foreach (int n in info.MembersNum)
             {
                 Members.Add(stds.Find(s => s.Number == n));
             }
+            foreach (Std i in Members)
+            {
+                i.Group = Order;
+            }
             Score = 0;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public override string ToString()
         {
             string str="";
