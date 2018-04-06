@@ -9,6 +9,8 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Xml.Linq;
 using System.Windows;
+using System.Threading;
+using System.ComponentModel;
 
 namespace StdControlSys
 {
@@ -104,10 +106,10 @@ namespace StdControlSys
         {
             string str="";
             str += Name + "\t[" + Order + "]\n";
-            str += "-=组长=-\n" + Leader.Name + "\n-=组员=-\n";
+            str += "组长:" + Leader.Name + "\n组员:\n";
             foreach (Std s in Members)
             {
-                str += s.Name + "\t";
+                str += s.Name + " ";
             }
             str += "\n";
             return str;
@@ -163,10 +165,10 @@ namespace StdControlSys
         {
             string str = "";
             str += Name + "\t[" + Order + "]\n";
-            str += "-=组长=-\n" + LeaderNum+ "\n-=组员=-\n";
+            str += "组长:" + LeaderNum+ "\n组员:";
             foreach (int s in MembersNum)
             {
-                str += s + "\t";
+                str += s + "  ";
             }
             str += "\n";
             return str;
@@ -313,5 +315,39 @@ namespace StdControlSys
             }
             return null;
         }
+    }
+
+    /// <summary>
+    /// 全局变量
+    /// </summary>
+    class Global : INotifyPropertyChanged
+    {
+        private string _SelectedGroupInfo = "";
+        /// <summary>
+        /// 被选择的小组信息
+        /// </summary>
+        public string SelectedGroupInfo
+        {
+            get { return _SelectedGroupInfo; }
+            set { _SelectedGroupInfo = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedGroupInfo"));
+            }
+        }
+
+        private string _SelectedStdInfo = "";
+        /// <summary>
+        /// 被选择的学生信息
+        /// </summary>
+        public string SelectedStdInfo
+        {
+            get { return _SelectedStdInfo; }
+            set
+            {
+                _SelectedStdInfo = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedStdInfo"));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

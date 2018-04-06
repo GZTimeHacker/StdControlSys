@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using System.Threading;
+using System.ComponentModel;
 
 namespace StdControlSys
 {
@@ -21,6 +23,7 @@ namespace StdControlSys
     /// </summary>
     public partial class MainWindow : Window
     {
+        Global GlobalInfo = new Global();
         Random random = new Random();
         List<Std> stds = new List<Std>();
         List<Group> groups = new List<Group>();
@@ -31,6 +34,16 @@ namespace StdControlSys
             InitializeComponent();
             ReadFileData("GroupInfo.xml", "StdInfo_GY4.xml");
             FlowersWords = FlowerWordsDefault;
+            foreach(var g in groups)
+            {
+                MessageBox.Show(g.ToString());
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.SelectedGroup.DataContext = GlobalInfo;
+            this.SelectedStd.DataContext = GlobalInfo;
         }
 
         /// <summary>
@@ -76,6 +89,48 @@ namespace StdControlSys
             char Selected=FlowersWords.ElementAtOrDefault(random.Next(0,FlowersWords.Length - 1));
             FlowerTokenWord.Content = Selected;
             FlowersWords=FlowersWords.Remove(FlowersWords.IndexOf(Selected), 1);
+        }
+
+        private void RandomGroupButton_Click(object sender, RoutedEventArgs e)
+        {
+            ThreadStart threadstart = new ThreadStart(RandomGroup);
+            Thread thread = new Thread(threadstart);
+            thread.Start();
+        }
+
+        /// <summary>
+        /// 随机抽取小组
+        /// </summary>
+        private void RandomGroup()
+        {
+            Group group;
+            for(int i = 0; i < 10; i++)
+            {
+                group = groups.ElementAtOrDefault(random.Next(0, groups.Count));
+                GlobalInfo.SelectedGroupInfo = "第" + group.Order + "组\n" + group.Name + "\n组长:" + group.Leader.Name;
+                Thread.Sleep(20 + i * i * 5);
+            }
+        }
+
+        private void RandomStdButton_Click(object sender, RoutedEventArgs e)
+        {
+            ThreadStart threadstart = new ThreadStart(RandomStd);
+            Thread thread = new Thread(threadstart);
+            thread.Start();
+        }
+
+        /// <summary>
+        /// 随机抽取学生
+        /// </summary>
+        private void RandomStd()
+        {
+            Std std;
+            for (int i = -15; i < 15; i++)
+            {
+                std = stds.ElementAtOrDefault(random.Next(0, stds.Count));
+                GlobalInfo.SelectedStdInfo = std.Name + "\n" + std.Number;
+                Thread.Sleep(20 + i * i);
+            }
         }
     }
 }

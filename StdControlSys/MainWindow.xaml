@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:StdControlSys"
         xmlns:p ="clr-namespace:StdControlSys.Properties"
         mc:Ignorable="d"
-        Title="学生信息管理系统" Height="360" Width="580" Icon="GZ_128X128.ico" ResizeMode="NoResize">
+        Title="学生信息管理系统" Height="360" Width="580" Icon="GZ_128X128.ico" ResizeMode="NoResize" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50*"/>
@@ -21,5 +21,11 @@
         <Label Content="飞花令" Grid.Column="3" HorizontalAlignment="Left" Margin="0.4,10,0,0" VerticalAlignment="Top" FontSize="16"/>
         <Label x:Name="FlowerTokenWord" Content="完" Grid.Column="3" Margin="38.4,40,31.2,52.4" Height="74" Width="74" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
         <Button x:Name="FlowerTokenButton" Content="飞花" Grid.Column="3" HorizontalAlignment="Left" Height="28" Margin="33.4,128,0,0" VerticalAlignment="Top" Width="74" Click="FlowerTokenButton_Click"/>
+        <Label Content="随机抽取小组" Grid.Column="2" HorizontalAlignment="Left" Margin="0.2,10,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Button x:Name="RandomGroupButton" Content="抽取" Grid.Column="2" HorizontalAlignment="Left" Height="28" Margin="10.2,128,0,0" VerticalAlignment="Top" Width="74" Click="RandomGroupButton_Click"/>
+        <Label x:Name="SelectedGroup" Content="{Binding SelectedGroupInfo}" Grid.Column="2" HorizontalAlignment="Left" Margin="0.2,40,0,0" VerticalAlignment="Top" FontSize="16" Height="83" Width="133" FontFamily="Microsoft YaHei UI Light"/>
+        <Label Content="随机抽取学生" HorizontalAlignment="Left" Margin="143,10,0,0" VerticalAlignment="Top" FontSize="16" Grid.ColumnSpan="2"/>
+        <Button x:Name="RandomStdButton" Content="抽取" Grid.Column="1" HorizontalAlignment="Left" Height="28" Margin="9.8,128,0,0" VerticalAlignment="Top" Width="74" Click="RandomStdButton_Click"/>
+        <Label x:Name="SelectedStd" Content="{Binding SelectedStdInfo}" Grid.Column="1" HorizontalAlignment="Left" Margin="0.8,40,0,0" VerticalAlignment="Top" FontSize="16" Height="83" Width="133" FontFamily="Microsoft YaHei UI Light"/>
     </Grid>
 </Window>
