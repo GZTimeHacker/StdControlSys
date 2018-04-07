@@ -6,11 +6,13 @@
         xmlns:local="clr-namespace:StdControlSys"
         xmlns:p ="clr-namespace:StdControlSys.Properties"
         mc:Ignorable="d"
-        Title="学生信息管理系统" Height="360" Width="580" Icon="GZ_128X128.ico" ResizeMode="NoResize" Loaded="Window_Loaded">
+        Title="学生抽签系统" Height="500" Width="770" Icon="GZ_128X128.ico" ResizeMode="NoResize" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50*"/>
-            <RowDefinition Height="50*"/>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="24*"/>
+            <RowDefinition Height="24*"/>
+            <RowDefinition Height="48*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25*"/>
@@ -18,23 +20,33 @@
             <ColumnDefinition Width="25*"/>
             <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="飞花令" Grid.Column="1" HorizontalAlignment="Left" Margin="0.8,10,0,0" VerticalAlignment="Top" FontSize="16"/>
-        <Label x:Name="FlowerTokenWord" Content="{Binding FlowerTokenChar}" Grid.Column="1" Margin="32.8,40,36.8,51.6" Height="74" Width="74" FontSize="45" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" FontFamily="STXingkai"/>
-        <Button x:Name="FlowerTokenButton" Content="飞花" Grid.Column="1" HorizontalAlignment="Left" Height="28" Margin="32.8,128,0,0" VerticalAlignment="Top" Width="74" Click="FlowerTokenButton_Click"/>
-        <Label Content="随机抽取小组" Grid.Column="2" HorizontalAlignment="Left" Margin="0.2,10,0,0" VerticalAlignment="Top" FontSize="16"/>
-        <Button x:Name="RandomGroupButton" Content="抽取" Grid.Column="2" HorizontalAlignment="Left" Height="28" Margin="10.2,128,0,0" VerticalAlignment="Top" Width="74" Click="RandomGroupButton_Click"/>
-        <Label x:Name="SelectedGroup" Content="{Binding SelectedGroupInfo}" Grid.Column="2" HorizontalAlignment="Right" Margin="0,40,10.4,0" VerticalAlignment="Top" FontSize="16" Height="83" Width="133" FontFamily="Microsoft YaHei UI Light"/>
-        <Label Content="随机抽取学生" HorizontalAlignment="Left" Margin="142.8,10,0,0" FontSize="16" Grid.ColumnSpan="2" Height="30" VerticalAlignment="Top" Grid.Column="2"/>
-        <Button x:Name="RandomStdButton" Content="抽取" Grid.Column="3" HorizontalAlignment="Left" Height="28" Margin="9.2,128,0,0" VerticalAlignment="Top" Width="74" Click="RandomStdButton_Click"/>
-        <Label x:Name="SelectedStd" Content="{Binding SelectedStdInfo}" Grid.Column="2" HorizontalAlignment="Right" Margin="0,40,10.6,0" VerticalAlignment="Top" FontSize="16" Height="83" Width="133" FontFamily="Microsoft YaHei UI Light" Grid.ColumnSpan="2"/>
-        <DataGrid x:Name="GroupData" HorizontalAlignment="Right" Width="145" Margin="-1,0,142.8,0" Grid.RowSpan="2" Grid.ColumnSpan="2" FrozenColumnCount="0" AutoGenerateColumns="False" FontSize="10" Height="166" VerticalAlignment="Top">
+        <Label Content="飞花令" HorizontalAlignment="Left" Margin="10,9.2,0,0" VerticalAlignment="Top" FontSize="16" Grid.Row="3"/>
+        <Label x:Name="FlowerTokenWord" Content="{Binding FlowerTokenChar}" Margin="30,45.2,36.8,57.2" Height="124" Width="124" FontSize="52" HorizontalAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" FontFamily="STXingkai" Grid.Row="3"/>
+        <Button x:Name="FlowerTokenButton" Content="飞花" HorizontalAlignment="Left" Height="28" Margin="10,188.2,0,0" VerticalAlignment="Top" Width="74" Click="FlowerTokenButton_Click" Grid.Row="3"/>
+        <Label Content="随机抽取小组" HorizontalAlignment="Left" Margin="0,0.2,0,0" VerticalAlignment="Top" FontSize="16" Grid.Row="1"/>
+        <Button x:Name="RandomGroupButton" Content="抽取" HorizontalAlignment="Left" Height="28" Margin="140,35.2,0,0" VerticalAlignment="Top" Width="51" Click="RandomGroupButton_Click" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <Label x:Name="SelectedGroup" Content="{Binding SelectedGroupInfo}" HorizontalAlignment="Right" Margin="0,35.2,55.8,0" VerticalAlignment="Top" FontSize="16" Height="80" Width="135" FontFamily="Microsoft YaHei UI Light" Grid.Row="1" Grid.RowSpan="2"/>
+        <Label Content="随机抽取学生" HorizontalAlignment="Left" FontSize="16" Height="30" VerticalAlignment="Top" Grid.Row="2"/>
+        <Button x:Name="RandomStdButton" Content="抽取" HorizontalAlignment="Left" Height="28" Margin="140,28,0,0" VerticalAlignment="Top" Width="51" Click="RandomStdButton_Click" Grid.Row="2" Grid.ColumnSpan="2"/>
+        <Label x:Name="SelectedStd" Content="{Binding SelectedStdInfo}" HorizontalAlignment="Right" Margin="0,33,55.8,0" VerticalAlignment="Top" FontSize="16" Height="80" Width="135" FontFamily="Microsoft YaHei UI Light" Grid.Row="2"/>
+        <DataGrid x:Name="GroupData" HorizontalAlignment="Right" Width="382" Margin="0,0.2,-0.4,0" Grid.ColumnSpan="2" FrozenColumnCount="0" AutoGenerateColumns="False" FontSize="14.5" Height="226" VerticalAlignment="Top" Grid.Column="2" CanUserResizeColumns="False" CanUserResizeRows="False" Grid.Row="1" Grid.RowSpan="3">
             <DataGrid.Columns>
-                <DataGridTextColumn Width="5*" Binding="{Binding Order}" ClipboardContentBinding="{x:Null}" Header="号" IsReadOnly="True"/>
+                <DataGridTextColumn Width="5*" Binding="{Binding Order}" ClipboardContentBinding="{x:Null}" Header="序号" IsReadOnly="True"/>
                 <DataGridTextColumn Width="25*" Binding="{Binding Name}" ClipboardContentBinding="{x:Null}" Header="组名" IsReadOnly="True"/>
-                <DataGridTextColumn Width="10*" Binding="{Binding Score}" ClipboardContentBinding="{x:Null}" Header="积分" IsReadOnly="True"/>
+                <DataGridTextColumn Width="10*" Binding="{Binding Score}" ClipboardContentBinding="{x:Null}" Header="积分" IsReadOnly="True" Foreground="#FFC41010" SortDirection="Descending"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="AddStdScore" Content="加分" Grid.Column="3" HorizontalAlignment="Left" Height="28" Margin="88.2,128,0,0" VerticalAlignment="Top" Width="45" Click="AddStdScore_Click"/>
-        <Button x:Name="AddGroupScore" Content="加分" Grid.Column="2" HorizontalAlignment="Left" Height="28" Margin="89.2,128,0,0" VerticalAlignment="Top" Width="45" Click="AddGroupScore_Click"/>
+        <Button x:Name="AddStdScore" Content="加分" HorizontalAlignment="Left" Height="28" Margin="140,75,0,0" VerticalAlignment="Top" Width="51" Click="AddStdScore_Click" Grid.Row="2" Grid.ColumnSpan="2"/>
+        <Button x:Name="AddGroupScore" Content="加分" HorizontalAlignment="Left" Height="28" Margin="140,75.2,0,0" VerticalAlignment="Top" Width="51" Click="AddGroupScore_Click" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <Menu HorizontalAlignment="Left" Height="19" Grid.RowSpan="2" VerticalAlignment="Top" Width="764" Grid.ColumnSpan="4" Margin="0,0,-0.4,0" BorderBrush="Black">
+            <MenuItem Header="文件" Height="19" Width="41">
+                <MenuItem x:Name="SaveScoreData" Header="保存积分文件" HorizontalAlignment="Left" Height="20" Click="SaveScoreData_Click" />
+                <MenuItem x:Name="ReadScoreData" Header="读取积分文件" HorizontalAlignment="Left" Height="20" Click="ReadScoreData_Click" />
+                <MenuItem x:Name="ReadStdData" Header="读取学生及小组数据" HorizontalAlignment="Left" Height="20" Click="ReadStdData_Click" />
+            </MenuItem>
+            <MenuItem Header="编辑" Height="19" Width="41">
+                <MenuItem x:Name="ResetScore" Header="重置得分" HorizontalAlignment="Left" Height="20" Click="ResetScore_Click" />
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>

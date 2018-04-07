@@ -343,6 +343,52 @@ namespace StdControlSys
             }
             return null;
         }
+        /// <summary>
+        /// 序列化积分信息
+        /// </summary>
+        /// <param name="score">积分信息</param>
+        /// <param name="FileName">文件位置</param>
+        /// <returns>序列化是否成功</returns>
+        static public bool SerializerScore(ScoreData score,string FileName)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ScoreData));
+            using (FileStream fs = new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            {
+                try
+                {
+                    xmlSerializer.Serialize(fs, score);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
+            }
+        }
+        /// <summary>
+        /// 反序列化积分信息
+        /// </summary>
+        /// <param name="FileName">文件位置</param>
+        /// <returns>积分信息</returns>
+        static public ScoreData DeserializeScore(string FileName)
+        {
+            ScoreData score;
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ScoreData));
+            using (FileStream fs = new FileStream(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            {
+                try
+                {
+                    score = (ScoreData)xmlSerializer.Deserialize(fs);
+                    return score;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            return null;
+        }
     }
     #endregion
 
@@ -392,5 +438,46 @@ namespace StdControlSys
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+    }
+
+    public class ScoreData
+    {
+        /// <summary>
+        /// 小组信息MD5
+        /// </summary>
+        public string GroupInfoMD5 { get; set; }
+        /// <summary>
+        /// 学生信息MD5
+        /// </summary>
+        public string StdDataMD5 { get; set; }
+        /// <summary>
+        /// 小组得分
+        /// </summary>
+        public List<int> GroupScore { get; set; }
+        /// <summary>
+        /// 学生得分
+        /// </summary>
+        public List<int> StudentScore { get; set; }
+        public ScoreData()
+        {
+            GroupInfoMD5 = "00000000";
+            StdDataMD5 = "00000000";
+            GroupScore = null;
+            StudentScore = null;
+        }
+        /// <summary>
+        /// 新建成绩信息
+        /// </summary>
+        /// <param name="GroupMD5">小组信息文件MD5</param>
+        /// <param name="StdMD5">学生数据文件MD5</param>
+        /// <param name="GrpScore">小组积分列表</param>
+        /// <param name="StdScore">学生积分列表</param>
+        public ScoreData(string GroupMD5,string StdMD5,List<int> GrpScore,List<int> StdScore)
+        {
+            GroupInfoMD5 = GroupMD5;
+            StdDataMD5 = StdMD5;
+            GroupScore = GrpScore;
+            StudentScore = StdScore;
+        }
     }
 }
