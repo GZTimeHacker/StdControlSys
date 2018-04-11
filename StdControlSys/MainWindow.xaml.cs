@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -32,6 +33,7 @@ namespace StdControlSys
         public string FlowerWordsDefault = "春夏秋冬江花月夜雪山行云雨水";
         int SelectingStdNum = -1;
         int SelectingGrpOrder = -1;
+        int SelectingStdInGrp = -1;
         string StdLocal = @"Data\StdInfo.xml";
         string GrpLocal = @"Data\GroupInfo.xml";
         string ScLocal = @"Data\ScoreInfo.xml";
@@ -41,13 +43,8 @@ namespace StdControlSys
         public MainWindow()
         {
             InitializeComponent();
-            ReadFileData(GrpLocal, StdLocal);
+            if(!ReadFileData(GrpLocal, StdLocal)) Close();
             FlowersWords = FlowerWordsDefault;
-            /*foreach (var item in groups)
-             *{
-             *    MessageBox.Show(item.ToString());
-             * }
-            */
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -56,6 +53,11 @@ namespace StdControlSys
             this.SelectedStd.DataContext = GlobalInfo;
             this.FlowerTokenWord.DataContext = GlobalInfo;
             this.GroupData.ItemsSource = groups;
+            this.SelectedStdInGrp.DataContext = GlobalInfo;
+            this.AutoStdInGrp.DataContext = GlobalInfo;
+            this.AddStdWithInfo.DataContext = GlobalInfo;
+            this.AddScoreResultBox.DataContext = GlobalInfo;
+            this.AddScoreInfoBox.DataContext = GlobalInfo;
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace StdControlSys
         /// </summary>
         /// <param name="GroupFileName">组文件位置</param>
         /// <param name="StdFileName">学生文件位置</param>
-        public void ReadFileData(string GroupFileName,string StdFileName)
+        public bool ReadFileData(string GroupFileName,string StdFileName)
         {
             stds = new List<Std>();
             groups = new List<Group>();
@@ -71,8 +73,7 @@ namespace StdControlSys
             {
                 MessageBox.Show( (!File.Exists(GroupFileName) ? GroupFileName : StdFileName )+ "文件不存在", "错误信息", MessageBoxButton.OK, MessageBoxImage.Error);
                 isFile = false;
-                this.Close();
-                return;
+                return false;
             }
             #region 写入测试
             //List<GroupInfo> ingroups = new List<GroupInfo>();
@@ -89,6 +90,7 @@ namespace StdControlSys
                 groups.Add(new Group(stds, item));
             }
             groupinfos = null;
+            return true;
         }
         #endregion
 
@@ -143,6 +145,15 @@ namespace StdControlSys
                 Thread.Sleep(20 + i * i / 2);
                 SelectingGrpOrder = group.Order;
             }
+            if (GlobalInfo.IsAutoStdFromGroup)
+            {
+                lock (GlobalInfo.SelectedStdInGrpInfo)
+                {
+                    ThreadStart threadstart = new ThreadStart(RandomStdInGrp);
+                    Thread thread = new Thread(threadstart);
+                    thread.Start();
+                }
+            }
         }
 
         private void RandomStdButton_Click(object sender, RoutedEventArgs e)
@@ -163,31 +174,71 @@ namespace StdControlSys
             for (int i = -15; i < 15; i++)
             {
                 std = stds.ElementAtOrDefault(random.Next(0, stds.Count));
-                GlobalInfo.SelectedStdInfo = std.Name + "\n" + std.Number;
+                Group grp = groups.Find(g => g.Order == std.Group);
+                GlobalInfo.SelectedStdInfo = std.Name + "\n" + std.Number + "\n" + ((grp != null) ? grp.Name : "无组别");
                 Thread.Sleep(20 + i * i / 2);
                 SelectingStdNum = std.Number;
+                grp = null;
             }
+            std = null;
+        }
+
+        private void RandomStdInGrpButton_Click(object sender, RoutedEventArgs e)
+        {
+            lock (GlobalInfo.SelectedStdInGrpInfo)
+            {
+                ThreadStart threadstart = new ThreadStart(RandomStdInGrp);
+                Thread thread = new Thread(threadstart);
+                thread.Start();
+            }
+        }
+        /// <summary>
+        /// 随机抽取组内成员
+        /// </summary>
+        private void RandomStdInGrp()
+        {
+            if (SelectingGrpOrder == -1) { MessageBox.Show("请先抽取小组", "提示", MessageBoxButton.OK, MessageBoxImage.Information); return; }
+            Std std;
+            Group grp = groups.Find(g => g.Order == SelectingGrpOrder);
+            List<Std> stdl = grp.Members;
+            stdl.Add(grp.Leader);
+            stdl.Reverse();
+            for (int i = -5; i < 15; i++)
+            {
+                std = stdl.ElementAt(random.Next(0, stdl.Count));
+                GlobalInfo.SelectedStdInGrpInfo = "抽取中...\n"+std.Name + "\n" + std.Number;
+                Thread.Sleep(20 + i * i /2);
+                SelectingStdInGrp = std.Number;
+            }
+            std = stdl.ElementAt(random.Next(0,stdl.Count));
+            GlobalInfo.SelectedStdInGrpInfo = "就是你了！\n"+std.Name + "\n" + std.Number;
+            std = null;
+            stdl = null;
+            grp = null;
         }
         #endregion
 
         private void AddStdScore_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectingStdNum == -1) { return; }
-            stds.Find(s => s.Number == SelectingStdNum).Score++;
-            Group grp = groups.Find(g => g.Leader.Number == SelectingStdNum);
+            AddScoreToGrpStd(SelectingStdNum);
+        }
+
+        private void AddStdInGrpScore_Click(object sender, RoutedEventArgs e)
+        {
+            AddScoreToGrpStd(SelectingStdInGrp);
+        }
+
+        private void AddScoreToGrpStd(int StdNum)
+        {
+            if (StdNum == -1) { return; }
+            stds.Find(s => s.Number == StdNum).Score++;
+            Group grp = groups.Find(g => g.Leader.Number == StdNum);
             if (grp != null) { grp.Score++; return; }
             foreach (var gr in groups)
             {
-                Std stemp = gr.Members.Find(s => s.Number == SelectingStdNum);
+                Std stemp = gr.Members.Find(s => s.Number == StdNum);
                 if (stemp != null) { grp = groups.Find(g => g.Order == stemp.Group); break; }
             }
-            if (grp != null) grp.Score++;
-        }
-
-        private void AddGroupScore_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectingGrpOrder == -1) { return; }
-            Group grp = groups.Find(g => g.Order == SelectingGrpOrder);
             if (grp != null) grp.Score++;
         }
 
@@ -214,9 +265,11 @@ namespace StdControlSys
         }
 
         /*
+         * 1.
+         * 2.添加得分前五同学公示
          * 3.DataGrid打乱顺序排列
-         * 4.*数据文件放在Data文件夹内
-         * 5.待定
+         * 4.倒计时做成多线程分离窗口式组件
+         * 5.
          */
         protected override void OnClosing(CancelEventArgs e)
         {
@@ -281,7 +334,81 @@ namespace StdControlSys
 
         private void ReadStdData_Click(object sender, RoutedEventArgs e)
         {
-            ReadFileData(GrpLocal, StdLocal);
+            if (ReadFileData(GrpLocal, StdLocal)) MessageBox.Show("读取成功");
+            else MessageBox.Show("读取失败");
+        }
+
+        /// <summary>
+        /// 为指定学生加分
+        /// </summary>
+        private void AddStdWithInfo_Click(object sender, RoutedEventArgs e)
+        {
+            int StdNum = 0;
+            if(int.TryParse(GlobalInfo.AddScoreStdInfo,out StdNum))
+            {
+                Std stemp = stds.Find(s => s.Number == StdNum);
+                if (stemp != null)
+                {
+                    stemp.Score++;
+                    Group grp = groups.Find(g => g.Leader.Number == StdNum);
+                    if (grp != null)
+                    {
+                        grp.Score++;
+                        GlobalInfo.AddScoreResult = "已为\n" + stemp.Name + "及其小组积分";
+                        return;
+                    }
+                    foreach (var gr in groups)
+                    {
+                        stemp = gr.Members.Find(s => s.Number == StdNum);
+                        if (stemp != null) { grp = groups.Find(g => g.Order == stemp.Group); break; }
+                    }
+                    if (grp != null) grp.Score++;
+                    GlobalInfo.AddScoreResult = "已为\n" + stemp.Name + "及其小组积分";
+                    return;
+                }
+                else
+                {
+                    GlobalInfo.AddScoreResult = "未找到\n学号为" + StdNum + "的学生";
+                    return;
+                }
+            }
+            else
+            {
+                Std stemp = stds.Find(s => s.Name == GlobalInfo.AddScoreStdInfo);
+                if (stemp != null)
+                {
+                    stemp.Score++;
+                    Group grp = groups.Find(g => g.Leader.Name == GlobalInfo.AddScoreStdInfo);
+                    if (grp != null)
+                    {
+                        grp.Score++;
+                        GlobalInfo.AddScoreResult = "已为\n" + GlobalInfo.AddScoreStdInfo + "及其小组积分";
+                        return;
+                    }
+                    foreach (var gr in groups)
+                    {
+                        stemp = gr.Members.Find(s => s.Name == GlobalInfo.AddScoreStdInfo);
+                        if (stemp != null) { grp = groups.Find(g => g.Order == stemp.Group); break; }
+                    }
+                    if (grp != null) grp.Score++;
+                    GlobalInfo.AddScoreResult = "已为\n" + GlobalInfo.AddScoreStdInfo + "及其小组积分";
+                    return;
+                }
+                else
+                {
+                    GlobalInfo.AddScoreResult = "未找到\n姓名为" + GlobalInfo.AddScoreStdInfo + "的学生";
+                    return;
+                }
+            }
+        }
+
+        private void AddScoreInfoBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                GlobalInfo.AddScoreStdInfo = AddScoreInfoBox.Text;
+                AddStdWithInfo_Click(null, null);
+            }
         }
     }
 }

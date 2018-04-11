@@ -437,6 +437,62 @@ namespace StdControlSys
             }
         }
 
+        private string _SelectedStdInGrpInfo = "waiting...";
+        /// <summary>
+        /// 小组中抽取的学生信息
+        /// </summary>
+        public string SelectedStdInGrpInfo
+        {
+            get { return _SelectedStdInGrpInfo; }
+            set
+            {
+                _SelectedStdInGrpInfo = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedStdInGrpInfo"));
+            }
+        }
+
+        private bool _IsAutoStdFromGroup = true;
+        /// <summary>
+        /// 是否自动抽取组内成员
+        /// </summary>
+        public bool IsAutoStdFromGroup
+        {
+            get { return _IsAutoStdFromGroup; }
+            set
+            {
+                _IsAutoStdFromGroup = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsAutoStdFromGroup"));
+            }
+        }
+
+        private string _AddScoreStdInfo = "170000";
+        /// <summary>
+        /// 需要加分同学信息
+        /// </summary>
+        public string AddScoreStdInfo
+        {
+            get { return _AddScoreStdInfo; }
+            set
+            {
+                _AddScoreStdInfo = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AddScoreStdInfo"));
+            }
+        }
+
+        private string _AddScoreResult = "";
+        /// <summary>
+        /// 加分结果
+        /// </summary>
+        public string AddScoreResult
+        {
+            get { return _AddScoreResult; }
+            set
+            {
+                _AddScoreResult = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("AddScoreResult"));
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
     }
 
