@@ -38,6 +38,7 @@ namespace StdControlSys
         string GrpLocal = @"Data\GroupInfo.xml";
         string ScLocal = @"Data\ScoreInfo.xml";
         bool isFile = true;
+        bool isStop = true;
 
         #region 后台启动工作
         public MainWindow()
@@ -158,11 +159,21 @@ namespace StdControlSys
 
         private void RandomStdButton_Click(object sender, RoutedEventArgs e)
         {
-            lock (GlobalInfo.SelectedStdInfo)
+            if (!isStop)
             {
-            ThreadStart threadstart = new ThreadStart(RandomStd);
-            Thread thread = new Thread(threadstart);
-            thread.Start();
+                isStop = true;
+                RandomStdButton.Content = "抽取";
+            }
+            else
+            {
+                RandomStdButton.Content = "停止";
+                isStop = false;
+                lock (GlobalInfo.SelectedStdInfo)
+                {
+                    ThreadStart threadstart = new ThreadStart(RandomStd);
+                    Thread thread = new Thread(threadstart);
+                    thread.Start();
+                }
             }
         }
         /// <summary>
@@ -173,12 +184,15 @@ namespace StdControlSys
             Std std;
             for (int i = -15; i < 15; i++)
             {
-                std = stds.ElementAtOrDefault(random.Next(0, stds.Count));
-                Group grp = groups.Find(g => g.Order == std.Group);
-                GlobalInfo.SelectedStdInfo = std.Name + "\n" + std.Number + "\n" + ((grp != null) ? grp.Name : "无组别");
-                Thread.Sleep(20 + i * i / 2);
-                SelectingStdNum = std.Number;
-                grp = null;
+                do
+                {
+                    std = stds.ElementAtOrDefault(random.Next(0, stds.Count));
+                    Group grp = groups.Find(g => g.Order == std.Group);
+                    GlobalInfo.SelectedStdInfo = std.Name + "\n" + std.Number + "\n" + ((grp != null) ? grp.Name : "无组别");
+                    Thread.Sleep(20 + i * i / 2);
+                    SelectingStdNum = std.Number;
+                    grp = null;
+                } while (!isStop&&i==0);
             }
             std = null;
         }
